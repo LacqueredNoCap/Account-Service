@@ -1,7 +1,7 @@
-package account.exHandle.controller;
+package account.controller;
 
-import account.user.User;
-import account.user.UserService;
+import account.dto.user.User;
+import account.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;

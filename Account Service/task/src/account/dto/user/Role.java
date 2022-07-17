@@ -1,4 +1,4 @@
-package account.user;
+package account.dto.user;
 
 public enum Role {
     USER,

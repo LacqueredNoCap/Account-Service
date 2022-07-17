@@ -1,45 +1,40 @@
 package account.config;
 
 import account.exHandle.RestAuthenticationEntryPoint;
-import account.user.UserService;
+import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
+import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
-// Extending the adapter and adding the annotation
+@Configuration
 @EnableWebSecurity
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PasswordEncoder encoder;
-    private final UserService userService;
+    private final UserDetailsService userDetailsService;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     public WebSecurityConfig(PasswordEncoder encoder,
-                             UserService userService,
+                             UserDetailsService userDetailsService,
                              RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
         this.encoder = encoder;
-        this.userService = userService;
+        this.userDetailsService = userDetailsService;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 
     // To configure what authentication should do in Spring Security,
     // we can use a special builder — AuthenticationManagerBuilder
     @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(userService)
-                .passwordEncoder(encoder);
-
-        // storing users in memory
-//        auth.inMemoryAuthentication()
-//                .withUser("Lacquered")
-//                .password(encoder.encode("1245Lacq"))
-//                .roles("ADMIN")
-//                .passwordEncoder(encoder);
+    protected void configure(AuthenticationManagerBuilder auth) {
+        auth.authenticationProvider(daoAuthenticationProvider());
     }
 
     // To specify which authentication methods are allowed (form-based, HTTP basic)
@@ -62,5 +57,13 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
         super.configure(web);
+    }
+
+    @Bean
+    public DaoAuthenticationProvider daoAuthenticationProvider() {
+        DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
+        provider.setPasswordEncoder(encoder);
+        provider.setUserDetailsService(userDetailsService);
+        return provider;
     }
 }
