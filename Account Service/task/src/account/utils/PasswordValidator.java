@@ -10,6 +10,8 @@ import java.util.Set;
 @Component
 public class PasswordValidator {
 
+    private static final int MIN_PASSWORD_LENGTH = 12;
+
     private static final Set<String> BREACHED_PASSWORDS =
             Set.of("PasswordForJanuary", "PasswordForFebruary", "PasswordForMarch",
                     "PasswordForApril", "PasswordForMay", "PasswordForJune",
@@ -23,7 +25,7 @@ public class PasswordValidator {
     }
 
     public void validatePassword(String oldPassword, String newPassword) {
-        if (newPassword.length() < 12) {
+        if (newPassword.length() < MIN_PASSWORD_LENGTH) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
                     "Password length must be 12 chars minimum!");

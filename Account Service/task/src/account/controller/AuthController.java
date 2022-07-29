@@ -2,7 +2,7 @@ package account.controller;
 
 import account.payload.request.NewPasswordRequest;
 import account.payload.response.PasswordResetResponse;
-import account.dto.user.User;
+import account.dto.User;
 import account.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -29,7 +29,6 @@ public class AuthController {
     @PostMapping("/signup")
     public User signup(@RequestBody @Valid User newUser) {
         userService.register(newUser);
-
         return newUser;
     }
 

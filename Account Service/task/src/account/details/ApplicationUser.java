@@ -1,6 +1,6 @@
 package account.details;
 
-import account.dto.user.User;
+import account.dto.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 

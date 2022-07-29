@@ -1,6 +1,6 @@
 package account.config;
 
-import account.exHandle.RestAuthenticationEntryPoint;
+import account.exception.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -30,15 +30,11 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
 
-    // To configure what authentication should do in Spring Security,
-    // we can use a special builder — AuthenticationManagerBuilder
     @Override
     protected void configure(AuthenticationManagerBuilder auth) {
         auth.authenticationProvider(daoAuthenticationProvider());
     }
 
-    // To specify which authentication methods are allowed (form-based, HTTP basic)
-    // and how they are configured
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic()
@@ -48,6 +44,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .authorizeRequests()
                 .mvcMatchers(HttpMethod.POST, "/api/auth/signup", "/actuator/shutdown").permitAll()
+                .mvcMatchers("/api/acct/payments").permitAll()
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

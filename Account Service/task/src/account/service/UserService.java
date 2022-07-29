@@ -1,12 +1,14 @@
 package account.service;
 
-import account.dto.user.User;
+import account.dto.User;
 import account.repository.UserRepository;
 import account.utils.PasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Locale;
 
 @Service
 public class UserService {
@@ -28,17 +30,24 @@ public class UserService {
     public User findUserByEmail(String email) {
         return repository.findUserByEmailIgnoreCase(email)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "User exist!"));
+                        HttpStatus.BAD_REQUEST, "User doesn't exist!"));
+    }
+
+    public void save(User user) {
+        user.setEmail(user.getEmail().toLowerCase(Locale.ENGLISH));
+
+        passwordValidator.validatePassword("", user.getPassword());
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        repository.save(user);
     }
 
     public void register(User user) {
-        if (repository.findUserByEmailIgnoreCase(user.getEmail()).isPresent()) {
+        if (repository.existsUserByEmailIgnoreCase(user.getEmail())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "User exist!");
         }
-        passwordValidator.validatePassword("", user.getPassword());
-        user.setPassword(encoder.encode(user.getPassword()));
-        repository.save(user);
+        this.save(user);
     }
 
     public void changePassword(String newPassword, String email) {
@@ -47,5 +56,4 @@ public class UserService {
         user.setPassword(encoder.encode(newPassword));
         repository.save(user);
     }
-
 }
