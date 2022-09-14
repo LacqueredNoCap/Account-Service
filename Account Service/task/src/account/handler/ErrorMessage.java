@@ -1,4 +1,4 @@
-package account.exception;
+package account.handler;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -1,15 +1,11 @@
 package account.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.Getter;
 import lombok.Setter;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.Pattern;
-import javax.validation.constraints.PositiveOrZero;
 
-@Entity(name = "payment")
+@Entity(name = "payments")
 @Getter @Setter
 public class Payment {
 
@@ -24,25 +20,21 @@ public class Payment {
             generator = "payment_sequence"
     )
     @Column
-    @JsonIgnore
-    private Long id;
+    private long id;
 
     @Column
-    @Email(regexp = "\\S+@acme.com", message = "email must ends with \"@acme.com\"")
     private String employee;
 
     @Column
-    @Pattern(regexp = "(0[1-9]|1[0-2])-(\\d|[1-9]\\d{1,2}|[12]\\d{3})", message = "Incorrect period format")
     private String period;
 
     @Column
-    @PositiveOrZero(message = "The salary must be non-negative")
-    private Long salary;
+    private long salary;
 
     public Payment() {
     }
 
-    public Payment(String employee, String period, Long salary) {
+    public Payment(String employee, String period, long salary) {
         this.employee = employee;
         this.period = period;
         this.salary = salary;

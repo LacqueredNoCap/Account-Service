@@ -2,11 +2,12 @@ package account.details;
 
 import account.dto.User;
 import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ApplicationUser implements UserDetails {
 
@@ -23,8 +24,11 @@ public class ApplicationUser implements UserDetails {
     }
 
     public static UserDetails fromUser(User user) {
-        return new org.springframework.security.core.userdetails.User(
-                user.getEmail(), user.getPassword(), Collections.emptySet());
+        Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+                .map(role -> new SimpleGrantedAuthority(role.getName().name()))
+                .collect(Collectors.toSet());
+
+        return new ApplicationUser(user.getEmail(), user.getPassword(), authorities);
     }
 
     @Override

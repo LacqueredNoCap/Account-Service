@@ -5,7 +5,7 @@ import lombok.Getter;
 
 @Getter
 @AllArgsConstructor
-public class PasswordResetResponse {
+public class UserDeletedResponse {
 
     private final String email;
     private final String status;

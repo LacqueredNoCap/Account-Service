@@ -8,7 +8,7 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-public interface PaymentRepository extends JpaRepository<Payment, String> {
+public interface PaymentRepository extends JpaRepository<Payment, Long> {
 
     boolean existsPaymentByEmployeeIgnoreCaseAndPeriod(String employee, String period);
 

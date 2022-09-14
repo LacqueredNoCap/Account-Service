@@ -1,15 +1,16 @@
 package account.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
+import java.util.HashSet;
+import java.util.Set;
 
-@Entity(name = "usr")
+@Entity(name = "users")
 @Getter @Setter
+@ToString
 public class User {
 
     @Id
@@ -23,35 +24,46 @@ public class User {
             generator = "user_sequence"
     )
     @Column
-    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
-    Long id;
+    private long id;
 
-    @NotBlank
     @Column
     private String name;
-    @NotBlank
+
     @Column
     private String lastname;
 
-    @NotBlank
-    @Email(regexp = "\\S+@acme.com", message = "email must ends with \"@acme.com\"")
     @Column(unique = true)
     private String email;
-    @NotBlank
+
     @Column
-    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     private String password;
 
-    public User() {}
+    @ManyToMany(
+            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+            fetch = FetchType.EAGER
+    )
+    @JoinTable(
+            name = "user_role",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "role_id")
+    )
+    private Set<Role> roles = new HashSet<>();
 
-    public User(
-            String name,
-            String lastname,
-            String email,
-            String password) {
+    public User() {
+    }
+
+    public User(String name, String lastname, String email, String password) {
         this.name = name;
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+    }
+
+    public void addRole(Role role) {
+        roles.add(role);
+    }
+
+    public void removeRole(Role role) {
+        roles.remove(role);
     }
 }

@@ -2,7 +2,7 @@ package account.service;
 
 import account.dto.Payment;
 import account.dto.User;
-import account.payload.response.PaymentResponse;
+import account.payload.response.dto.PaymentResponse;
 import account.repository.PaymentRepository;
 import account.repository.UserRepository;
 import org.springframework.http.HttpStatus;
@@ -18,7 +18,6 @@ import java.util.Locale;
 import java.util.stream.Collectors;
 
 @Service
-@Transactional
 public class PaymentService {
 
     private final PaymentRepository paymentRepository;
@@ -29,6 +28,7 @@ public class PaymentService {
         this.userRepository = userRepository;
     }
 
+    @Transactional
     public void updatePayment(Payment updatedPayment) {
         Payment payment = paymentRepository.findPaymentByEmployeeIgnoreCaseAndPeriod(
                         updatedPayment.getEmployee(), updatedPayment.getPeriod())
@@ -40,6 +40,7 @@ public class PaymentService {
         paymentRepository.save(payment);
     }
 
+    @Transactional
     public void savePayment(Payment payment) {
         validatePayment(payment);
         paymentRepository.save(payment);
@@ -59,26 +60,23 @@ public class PaymentService {
         }
     }
 
+    @Transactional
     public void saveAllPayments(List<Payment> payments) {
         payments.forEach(this::savePayment);
-    }
-
-    public Payment getPaymentByEmailAndPeriod(String email, String period) {
-        return paymentRepository.findPaymentByEmployeeIgnoreCaseAndPeriod(email, period).orElseThrow(() ->
-                new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST,
-                        "Period has a wrong format!"
-                ));
-    }
-
-    public List<Payment> getAllPaymentsByEmail(String username) {
-        return paymentRepository.findPaymentsByEmployeeIgnoreCaseOrderByPeriodDesc(username);
     }
 
     public PaymentResponse getPaymentResponseByEmailAndPeriod(String email, String period) {
         Payment payment = this.getPaymentByEmailAndPeriod(email, period);
 
         return this.paymentMapToPaymentResponse(payment);
+    }
+
+    private Payment getPaymentByEmailAndPeriod(String email, String period) {
+        return paymentRepository.findPaymentByEmployeeIgnoreCaseAndPeriod(email, period).orElseThrow(() ->
+                new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Period has a wrong format!"
+                ));
     }
 
     public List<PaymentResponse> getAllPaymentResponsesByEmail(String email) {
@@ -88,6 +86,10 @@ public class PaymentService {
                 //.sorted(Comparator.comparing(Payment::getPeriod).reversed())
                 .map(this::paymentMapToPaymentResponse)
                 .collect(Collectors.toList());
+    }
+
+    private List<Payment> getAllPaymentsByEmail(String username) {
+        return paymentRepository.findPaymentsByEmployeeIgnoreCaseOrderByPeriodDesc(username);
     }
 
     private PaymentResponse paymentMapToPaymentResponse(Payment payment) {

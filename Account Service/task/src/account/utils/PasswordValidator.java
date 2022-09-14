@@ -16,7 +16,8 @@ public class PasswordValidator {
             Set.of("PasswordForJanuary", "PasswordForFebruary", "PasswordForMarch",
                     "PasswordForApril", "PasswordForMay", "PasswordForJune",
                     "PasswordForJuly", "PasswordForAugust", "PasswordForSeptember",
-                    "PasswordForOctober", "PasswordForNovember", "PasswordForDecember");
+                    "PasswordForOctober", "PasswordForNovember", "PasswordForDecember"
+            );
 
     private final PasswordEncoder encoder;
 

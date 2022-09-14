@@ -1,8 +1,10 @@
 package account.controller;
 
-import account.payload.request.NewPasswordRequest;
-import account.payload.response.PasswordResetResponse;
 import account.dto.User;
+import account.payload.request.NewPasswordRequest;
+import account.payload.request.dto.UserSingUpRequest;
+import account.payload.response.PasswordResetResponse;
+import account.payload.response.dto.UserInfoResponse;
 import account.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -27,15 +29,16 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public User signup(@RequestBody @Valid User newUser) {
-        userService.register(newUser);
-        return newUser;
+    public UserInfoResponse signup(@RequestBody @Valid UserSingUpRequest newUser) {
+        userService.signup(newUser);
+        User user = userService.findUserByEmail(newUser.getEmail());
+        return new UserInfoResponse(user);
     }
 
     @PostMapping("/changepass")
-    public ResponseEntity<?> changePassword(@RequestBody NewPasswordRequest newPassword,
+    public ResponseEntity<?> changePassword(@RequestBody NewPasswordRequest request,
                                          @AuthenticationPrincipal UserDetails details) {
-        userService.changePassword(newPassword.getNewPassword(), details.getUsername());
+        userService.changeUserPassword(details.getUsername(), request.getNewPassword());
 
         return ResponseEntity.ok().body(new PasswordResetResponse(
                 details.getUsername(),

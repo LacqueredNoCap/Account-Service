@@ -1,4 +1,4 @@
-package account.exception;
+package account.handler;
 
 import org.springframework.beans.TypeMismatchException;
 import org.springframework.http.HttpHeaders;
@@ -70,7 +70,6 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         return new ResponseEntity<>(responseEntity, headers, status);
     }
 
-    // BasicErrorController will handle the exception. Just overriding status code
     @ExceptionHandler(ConstraintViolationException.class)
     public void handleConstraintViolationException(HttpServletResponse response) throws IOException {
         response.sendError(HttpStatus.BAD_REQUEST.value());
@@ -78,19 +77,19 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
 //    @Override
 //    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-//            MethodArgumentNotValidException exception,
+//            MethodArgumentNotValidException handler,
 //            HttpHeaders headers,
 //            HttpStatus status, WebRequest request) {
 //
-//        //return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+//        //return new ResponseEntity<>(handler.getMessage(), HttpStatus.BAD_REQUEST);
+//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, handler.getMessage());
 //    }
 //
 //    @ExceptionHandler(ConstraintViolationException.class)
 //    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException exception) {
-//        //return new ResponseEntity<>(exception.getMessage(), HttpStatus.BAD_REQUEST);
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, exception.getMessage());
+//    public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException handler) {
+//        //return new ResponseEntity<>(handler.getMessage(), HttpStatus.BAD_REQUEST);
+//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, handler.getMessage());
 //    }
 
 //    @ExceptionHandler(ConstraintViolationException.class)

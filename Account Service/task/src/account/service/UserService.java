@@ -1,59 +1,111 @@
 package account.service;
 
+import account.dto.Role;
 import account.dto.User;
+import account.payload.request.dto.UserSingUpRequest;
+import account.repository.RoleRepository;
 import account.repository.UserRepository;
+import account.service.role.RoleEnum;
 import account.utils.PasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 @Service
 public class UserService {
 
-    private final UserRepository repository;
-
+    private final UserRepository userRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder encoder;
-
     private final PasswordValidator passwordValidator;
 
-    public UserService(UserRepository repository,
+    public UserService(UserRepository userRepository,
+                       RoleRepository roleRepository,
                        PasswordEncoder encoder,
                        PasswordValidator passwordValidator) {
-        this.repository = repository;
+        this.userRepository = userRepository;
+        this.roleRepository = roleRepository;
         this.encoder = encoder;
         this.passwordValidator = passwordValidator;
     }
 
     public User findUserByEmail(String email) {
-        return repository.findUserByEmailIgnoreCase(email)
+        return userRepository.findUserByEmailIgnoreCase(email)
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.BAD_REQUEST, "User doesn't exist!"));
     }
 
-    public void save(User user) {
-        user.setEmail(user.getEmail().toLowerCase(Locale.ENGLISH));
-
-        passwordValidator.validatePassword("", user.getPassword());
-        user.setPassword(encoder.encode(user.getPassword()));
-
-        repository.save(user);
+    public List<User> findAllUsers() {
+        return userRepository.findAll();
     }
 
-    public void register(User user) {
-        if (repository.existsUserByEmailIgnoreCase(user.getEmail())) {
+    public void signup(UserSingUpRequest newUser) {
+        if (userRepository.existsUserByEmailIgnoreCase(newUser.getEmail())) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "User exist!");
         }
+
+        User user = new User(
+                newUser.getName(),
+                newUser.getLastname(),
+                newUser.getEmail(),
+                newUser.getPassword()
+        );
+
+        if (userRepository.count() == 0) {
+            user.addRole(roleRepository.findRoleByName(RoleEnum.ROLE_ADMINISTRATOR)
+                    .orElseThrow(() -> new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND,
+                                    "Role not found!"
+                            )
+                    ));
+        } else {
+            user.addRole(roleRepository.findRoleByName(RoleEnum.ROLE_USER)
+                    .orElseThrow(() -> new ResponseStatusException(
+                                    HttpStatus.NOT_FOUND,
+                                    "Role not found!"
+                            )
+                    ));
+        }
+
         this.save(user);
     }
 
-    public void changePassword(String newPassword, String email) {
-        User user = findUserByEmail(email);
+    private void save(User user) {
+        user.setEmail(user.getEmail().toLowerCase(Locale.ENGLISH));
+        passwordValidator.validatePassword("", user.getPassword());
+        user.setPassword(encoder.encode(user.getPassword()));
+
+        userRepository.save(user);
+    }
+
+    public void changeUserPassword(String email, String newPassword) {
+        User user = this.findUserByEmail(email);
         passwordValidator.validatePassword(user.getPassword(), newPassword);
         user.setPassword(encoder.encode(newPassword));
-        repository.save(user);
+        userRepository.save(user);
+    }
+
+    public void deleteUserByEmail(String email) {
+        if (!userRepository.existsUserByEmailIgnoreCase(email)) {
+            throw new ResponseStatusException(
+                    HttpStatus.NOT_FOUND, "User not found!");
+        }
+        if (userRepository.findUserByEmailIgnoreCase(email)
+                .map(User::getRoles)
+                .orElse(Collections.emptySet())
+                .stream()
+                .map(Role::getName)
+                .anyMatch(role -> role.equals(RoleEnum.ROLE_ADMINISTRATOR))) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR role!");
+        }
+
+        userRepository.deleteByEmailIgnoreCase(email);
     }
 }
