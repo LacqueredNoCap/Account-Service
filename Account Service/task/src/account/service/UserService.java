@@ -10,6 +10,7 @@ import account.utils.PasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Collections;
@@ -44,6 +45,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void signup(UserSingUpRequest newUser) {
         if (userRepository.existsUserByEmailIgnoreCase(newUser.getEmail())) {
             throw new ResponseStatusException(
@@ -84,6 +86,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void changeUserPassword(String email, String newPassword) {
         User user = this.findUserByEmail(email);
         passwordValidator.validatePassword(user.getPassword(), newPassword);
@@ -91,6 +94,7 @@ public class UserService {
         userRepository.save(user);
     }
 
+    @Transactional(rollbackFor = ResponseStatusException.class)
     public void deleteUserByEmail(String email) {
         if (!userRepository.existsUserByEmailIgnoreCase(email)) {
             throw new ResponseStatusException(

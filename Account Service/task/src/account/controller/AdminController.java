@@ -40,7 +40,8 @@ public class AdminController {
     }
 
     @DeleteMapping("/{email}")
-    public UserDeletedResponse deleteUser(@PathVariable(value = "email") String email) {
+    public UserDeletedResponse deleteUser(
+            @PathVariable(value = "email", required = false) String email) {
         userService.deleteUserByEmail(email);
         return new UserDeletedResponse(email, "Deleted successfully!");
     }

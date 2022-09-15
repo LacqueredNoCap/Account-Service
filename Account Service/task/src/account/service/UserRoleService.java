@@ -29,7 +29,7 @@ public class UserRoleService {
                         HttpStatus.NOT_FOUND, "User not found!"));
 
         Operation operation = getOperation(roleChange.getOperation());
-        Role role = this.getRoleByRoleEnum(getRole(roleChange.getRole()));
+        Role role = this.getRoleByRoleEnum(getRole("ROLE_" + roleChange.getRole()));
 
         if (operation.equals(Operation.GRANT)) {
             this.grantRoleToUser(user, role);
@@ -58,17 +58,17 @@ public class UserRoleService {
     }
 
     private void removeRoleFromUser(User user, Role role) {
-        if (!user.getRoles().contains(role)) {
+        if (role.getName().equals(RoleEnum.ROLE_ADMINISTRATOR)) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "The user does not have a role!");
+                    HttpStatus.BAD_REQUEST, "Can't remove ADMINISTRATOR role!");
         }
         if (user.getRoles().contains(role) && user.getRoles().size() == 1) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "The user must have at least one role!");
         }
-        if (role.getName().equals(RoleEnum.ROLE_ADMINISTRATOR)) {
+        if (!user.getRoles().contains(role)) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Can't remove ADMINISTRATOR role!");
+                    HttpStatus.BAD_REQUEST, "The user does not have a role!");
         }
 
         user.removeRole(role);
@@ -87,8 +87,7 @@ public class UserRoleService {
         try {
             return RoleEnum.valueOf(role);
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Role not found!");
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Role not found!");
         }
     }
 }
