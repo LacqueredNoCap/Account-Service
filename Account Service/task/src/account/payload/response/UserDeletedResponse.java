@@ -1,6 +1,5 @@
 package account.payload.response;
 
-import lombok.AllArgsConstructor;
 import lombok.Getter;
 
 @Getter

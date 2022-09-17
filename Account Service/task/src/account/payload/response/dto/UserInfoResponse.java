@@ -1,23 +1,19 @@
 package account.payload.response.dto;
 
-import account.dto.User;
-import lombok.Getter;
-import lombok.Setter;
-
 import java.util.Set;
 import java.util.stream.Collectors;
 
-@Getter @Setter
+import lombok.Getter;
+
+import account.dto.User;
+
+@Getter
 public class UserInfoResponse {
 
     private final long id;
-
     private final String name;
-
     private final String lastname;
-
     private final String email;
-
     private final Set<String> roles;
 
     public UserInfoResponse(User user) {
@@ -29,6 +25,19 @@ public class UserInfoResponse {
         this.name = user.getName();
         this.lastname = user.getLastname();
         this.email = user.getEmail();
+        this.roles = roles;
+    }
+
+    public UserInfoResponse(
+            long id,
+            String name,
+            String lastname,
+            String email,
+            Set<String> roles) {
+        this.id = id;
+        this.name = name;
+        this.lastname = lastname;
+        this.email = email;
         this.roles = roles;
     }
 }

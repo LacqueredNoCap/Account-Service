@@ -36,7 +36,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 .error(status.getReasonPhrase())
                 .status(status.value())
                 .message(defaultMessage)
-                .path(ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri().getPath())
+                .path(ServletUriComponentsBuilder
+                        .fromCurrentRequestUri()
+                        .build()
+                        .toUri()
+                        .getPath()
+                )
                 .build();
 
         return new ResponseEntity<>(responseEntity, headers, status);
@@ -50,7 +55,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 .error(status.getReasonPhrase())
                 .status(status.value())
                 .message(ex.getLocalizedMessage())
-                .path(ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri().getPath())
+                .path(ServletUriComponentsBuilder
+                        .fromCurrentRequestUri()
+                        .build()
+                        .toUri()
+                        .getPath()
+                )
                 .build();
 
         return new ResponseEntity<>(responseEntity, headers, status);
@@ -64,7 +74,12 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
                 .error(status.getReasonPhrase())
                 .status(status.value())
                 .message(ex.getLocalizedMessage())
-                .path(ServletUriComponentsBuilder.fromCurrentRequestUri().build().toUri().getPath())
+                .path(ServletUriComponentsBuilder
+                        .fromCurrentRequestUri()
+                        .build()
+                        .toUri()
+                        .getPath()
+                )
                 .build();
 
         return new ResponseEntity<>(responseEntity, headers, status);
@@ -75,25 +90,4 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
         response.sendError(HttpStatus.BAD_REQUEST.value());
     }
 
-//    @Override
-//    protected ResponseEntity<Object> handleMethodArgumentNotValid(
-//            MethodArgumentNotValidException handler,
-//            HttpHeaders headers,
-//            HttpStatus status, WebRequest request) {
-//
-//        //return new ResponseEntity<>(handler.getMessage(), HttpStatus.BAD_REQUEST);
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, handler.getMessage());
-//    }
-//
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    @ResponseStatus(HttpStatus.BAD_REQUEST)
-//    public ResponseEntity<?> handleConstraintViolation(ConstraintViolationException handler) {
-//        //return new ResponseEntity<>(handler.getMessage(), HttpStatus.BAD_REQUEST);
-//        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, handler.getMessage());
-//    }
-
-//    @ExceptionHandler(ConstraintViolationException.class)
-//    public void handleConstraintViolationException(HttpServletResponse response) throws IOException {
-//        response.sendError(HttpStatus.BAD_REQUEST.value());
-//    }
 }

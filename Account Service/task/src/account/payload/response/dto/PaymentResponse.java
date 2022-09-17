@@ -1,14 +1,19 @@
 package account.payload.response.dto;
 
-import lombok.AllArgsConstructor;
-import lombok.Builder;
+import lombok.Getter;
 
-@AllArgsConstructor
-@Builder
+@Getter
 public class PaymentResponse {
 
     private final String name;
     private final String lastname;
     private final String period;
     private final String salary;
+
+    public PaymentResponse(String name, String lastname, String period, String salary) {
+        this.name = name;
+        this.lastname = lastname;
+        this.period = period;
+        this.salary = salary;
+    }
 }

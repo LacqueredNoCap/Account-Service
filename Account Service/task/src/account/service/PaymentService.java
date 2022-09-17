@@ -93,10 +93,11 @@ public class PaymentService {
     }
 
     private PaymentResponse paymentMapToPaymentResponse(Payment payment) {
-        User user = userRepository.findUserByEmailIgnoreCase(payment.getEmployee()).orElseThrow(() ->
-                        new ResponseStatusException(
+        User user = userRepository.findUserByEmailIgnoreCase(payment.getEmployee())
+                .orElseThrow(() -> new ResponseStatusException(
                                 HttpStatus.BAD_REQUEST,
-                                "User doesn't exist!"));
+                                "User doesn't exist!")
+                );
 
         String salaryPattern = "%d dollar(s) %d cent(s)";
         DateTimeFormatter datePattern = DateTimeFormatter.ofPattern("MM-yyyy", Locale.ENGLISH);
@@ -104,12 +105,12 @@ public class PaymentService {
         YearMonth ym = YearMonth.parse(payment.getPeriod(), datePattern);
         String period = ym.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + "-" + ym.getYear();
 
-        return PaymentResponse.builder()
-                .name(user.getName())
-                .lastname(user.getLastname())
-                .period(period)
-                .salary(String.format(
-                        salaryPattern, payment.getSalary() / 100, payment.getSalary() % 100))
-                .build();
+        return new PaymentResponse(
+                user.getName(),
+                user.getLastname(),
+                period,
+                String.format(
+                        salaryPattern, payment.getSalary() / 100, payment.getSalary() % 100)
+        );
     }
 }
