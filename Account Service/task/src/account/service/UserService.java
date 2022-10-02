@@ -6,7 +6,7 @@ import account.payload.request.dto.UserSingUpRequest;
 import account.repository.RoleRepository;
 import account.repository.UserRepository;
 import account.service.role.RoleEnum;
-import account.utils.PasswordValidator;
+import account.security.PasswordValidator;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;

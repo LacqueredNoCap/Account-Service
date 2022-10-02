@@ -1,13 +1,14 @@
 package account.service.role;
 
-import account.dto.Role;
-import account.repository.RoleRepository;
 import org.springframework.boot.ApplicationArguments;
 import org.springframework.boot.ApplicationRunner;
 import org.springframework.stereotype.Component;
 
+import account.dto.Role;
+import account.repository.RoleRepository;
+
 @Component
-public class RoleLoader implements ApplicationRunner{
+public class RoleLoader implements ApplicationRunner {
 
     private final RoleRepository roleRepository;
 

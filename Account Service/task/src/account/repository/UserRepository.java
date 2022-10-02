@@ -1,12 +1,11 @@
 package account.repository;
 
-import account.dto.User;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.stereotype.Repository;
-
 import java.util.Optional;
 
-@Repository
+import account.dto.User;
+
+import org.springframework.data.jpa.repository.JpaRepository;
+
 public interface UserRepository extends JpaRepository<User, Long> {
 
     Optional<User> findUserByEmailIgnoreCase(String email);

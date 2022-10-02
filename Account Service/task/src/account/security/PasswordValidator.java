@@ -1,11 +1,11 @@
-package account.utils;
+package account.security;
+
+import java.util.Set;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ResponseStatusException;
-
-import java.util.Set;
 
 @Component
 public class PasswordValidator {

@@ -3,25 +3,14 @@ package account.dto;
 import account.service.role.RoleEnum;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.ToString;
 
 import javax.persistence.*;
 
 @Entity(name = "roles")
 @Getter @Setter
-@ToString
 public class Role {
 
     @Id
-//    @SequenceGenerator(
-//            name = "role_sequence",
-//            sequenceName = "role_sequence",
-//            allocationSize = 1
-//    )
-//    @GeneratedValue(
-//            strategy = GenerationType.SEQUENCE,
-//            generator = "role_sequence"
-//    )
     @Column
     private long id;
 

@@ -1,15 +1,5 @@
 package account.service;
 
-import account.dto.Payment;
-import account.dto.User;
-import account.payload.response.dto.PaymentResponse;
-import account.repository.PaymentRepository;
-import account.repository.UserRepository;
-import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
-
 import java.time.YearMonth;
 import java.time.format.DateTimeFormatter;
 import java.time.format.TextStyle;
@@ -17,8 +7,22 @@ import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
 
+import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
+
+import account.dto.Payment;
+import account.dto.User;
+import account.payload.response.dto.PaymentResponse;
+import account.repository.PaymentRepository;
+import account.repository.UserRepository;
+
 @Service
 public class PaymentService {
+
+    private static final String SALARY_PATTERN = "%d dollar(s) %d cent(s)";
+    private static final String DATE_TIME_PATTERN = "MM-yyyy";
 
     private final PaymentRepository paymentRepository;
     private final UserRepository userRepository;
@@ -99,9 +103,7 @@ public class PaymentService {
                                 "User doesn't exist!")
                 );
 
-        String salaryPattern = "%d dollar(s) %d cent(s)";
-        DateTimeFormatter datePattern = DateTimeFormatter.ofPattern("MM-yyyy", Locale.ENGLISH);
-
+        DateTimeFormatter datePattern = DateTimeFormatter.ofPattern(DATE_TIME_PATTERN, Locale.ENGLISH);
         YearMonth ym = YearMonth.parse(payment.getPeriod(), datePattern);
         String period = ym.getMonth().getDisplayName(TextStyle.FULL, Locale.ENGLISH) + "-" + ym.getYear();
 
@@ -109,8 +111,9 @@ public class PaymentService {
                 user.getName(),
                 user.getLastname(),
                 period,
-                String.format(
-                        salaryPattern, payment.getSalary() / 100, payment.getSalary() % 100)
+                String.format(SALARY_PATTERN,
+                        payment.getSalary() / 100, payment.getSalary() % 100
+                )
         );
     }
 }

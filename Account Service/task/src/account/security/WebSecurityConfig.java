@@ -3,8 +3,10 @@ package account.security;
 import account.handler.AccessDeniedHandlerImpl;
 import account.handler.RestAuthenticationEntryPoint;
 import account.service.role.RoleEnum;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Primary;
 import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
@@ -15,6 +17,7 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
@@ -23,14 +26,15 @@ import org.springframework.security.web.access.AccessDeniedHandler;
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final PasswordEncoder encoder;
     private final UserDetailsService userDetailsService;
     private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
-    public WebSecurityConfig(PasswordEncoder encoder,
-                             UserDetailsService userDetailsService,
-                             RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
-        this.encoder = encoder;
+    @Value("${passwordEncoder.strength}")
+    private int passwordEncoderStrength;
+
+    public WebSecurityConfig(
+            UserDetailsService userDetailsService,
+            RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
     }
@@ -66,9 +70,15 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
     @Bean
+    @Primary
+    public PasswordEncoder encoder() {
+        return new BCryptPasswordEncoder(passwordEncoderStrength);
+    }
+
+    @Bean
     public DaoAuthenticationProvider daoAuthenticationProvider() {
         DaoAuthenticationProvider provider = new DaoAuthenticationProvider();
-        provider.setPasswordEncoder(encoder);
+        provider.setPasswordEncoder(encoder());
         provider.setUserDetailsService(userDetailsService);
         return provider;
     }

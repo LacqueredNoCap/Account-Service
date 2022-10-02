@@ -1,6 +1,7 @@
 package account.payload.response.dto;
 
-import java.util.Set;
+import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 import lombok.Getter;
@@ -14,30 +15,18 @@ public class UserInfoResponse {
     private final String name;
     private final String lastname;
     private final String email;
-    private final Set<String> roles;
+    private final List<String> roles;
 
     public UserInfoResponse(User user) {
-        Set<String> roles = user.getRoles().stream()
+        List<String> roles = user.getRoles().stream()
                 .map(role -> role.getName().name())
-                .collect(Collectors.toSet());
+                .sorted(Comparator.naturalOrder())
+                .collect(Collectors.toList());
 
         this.id = user.getId();
         this.name = user.getName();
         this.lastname = user.getLastname();
         this.email = user.getEmail();
-        this.roles = roles;
-    }
-
-    public UserInfoResponse(
-            long id,
-            String name,
-            String lastname,
-            String email,
-            Set<String> roles) {
-        this.id = id;
-        this.name = name;
-        this.lastname = lastname;
-        this.email = email;
         this.roles = roles;
     }
 }
