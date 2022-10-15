@@ -1,4 +1,4 @@
-package account.payload.response.dto;
+package account.dto.response.info;
 
 import java.util.Comparator;
 import java.util.List;
@@ -6,7 +6,7 @@ import java.util.stream.Collectors;
 
 import lombok.Getter;
 
-import account.dto.User;
+import account.entity.User;
 
 @Getter
 public class UserInfoResponse {

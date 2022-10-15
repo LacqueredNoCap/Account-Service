@@ -1,6 +1,5 @@
-package account.payload.request.dto;
+package account.dto.request.info;
 
-import account.dto.Payment;
 import lombok.Getter;
 import lombok.Setter;
 

@@ -1,4 +1,4 @@
-package account.dto;
+package account.entity;
 
 import account.service.role.RoleEnum;
 import lombok.Getter;
@@ -12,7 +12,7 @@ public class Role {
 
     @Id
     @Column
-    private long id;
+    private Long id;
 
     @Column(unique = true, nullable = false)
     @Enumerated(EnumType.STRING)

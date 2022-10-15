@@ -1,10 +1,10 @@
 package account.controller;
 
-import account.dto.User;
-import account.payload.request.NewPasswordRequest;
-import account.payload.request.dto.UserSingUpRequest;
-import account.payload.response.PasswordResetResponse;
-import account.payload.response.dto.UserInfoResponse;
+import account.entity.User;
+import account.dto.request.NewPasswordRequest;
+import account.dto.request.info.UserSingUpRequest;
+import account.dto.response.PasswordResetResponse;
+import account.dto.response.info.UserInfoResponse;
 import account.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;

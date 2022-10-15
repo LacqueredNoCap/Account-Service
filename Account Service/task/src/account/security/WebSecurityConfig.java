@@ -56,6 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/api/admin/**").hasAuthority(RoleEnum.ROLE_ADMINISTRATOR.name())
                 .mvcMatchers("/api/acct/**").hasAuthority(RoleEnum.ROLE_ACCOUNTANT.name())
                 .mvcMatchers(HttpMethod.GET, "/api/empl/payment").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ACCOUNTANT.name())
+                .mvcMatchers("api/security/**").hasAuthority(RoleEnum.ROLE_AUDITOR.name())
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()

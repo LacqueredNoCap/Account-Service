@@ -1,4 +1,4 @@
-package account.dto;
+package account.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class User {
             generator = "user_sequence"
     )
     @Column
-    private long id;
+    private Long id;
 
     @Column
     private String name;
@@ -35,6 +35,9 @@ public class User {
 
     @Column
     private String password;
+
+    @Column
+    private boolean isNotLocked;
 
     @ManyToMany(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},

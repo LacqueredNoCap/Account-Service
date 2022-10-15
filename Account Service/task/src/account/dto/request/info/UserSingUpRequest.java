@@ -1,4 +1,4 @@
-package account.payload.request.dto;
+package account.dto.request.info;
 
 import lombok.Getter;
 import lombok.Setter;

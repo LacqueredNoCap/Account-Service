@@ -12,9 +12,9 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
-import account.dto.Payment;
-import account.payload.request.dto.PaymentRequest;
-import account.payload.response.StatusResponse;
+import account.entity.Payment;
+import account.dto.request.info.PaymentRequest;
+import account.dto.response.StatusResponse;
 import account.service.PaymentService;
 
 @Validated

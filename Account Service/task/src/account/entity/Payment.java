@@ -1,4 +1,4 @@
-package account.dto;
+package account.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -20,7 +20,7 @@ public class Payment {
             generator = "payment_sequence"
     )
     @Column
-    private long id;
+    private Long id;
 
     @Column
     private String employee;
@@ -29,12 +29,12 @@ public class Payment {
     private String period;
 
     @Column
-    private long salary;
+    private Long salary;
 
     public Payment() {
     }
 
-    public Payment(String employee, String period, long salary) {
+    public Payment(String employee, String period, Long salary) {
         this.employee = employee;
         this.period = period;
         this.salary = salary;

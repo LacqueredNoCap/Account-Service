@@ -1,8 +1,8 @@
 package account.service;
 
-import account.dto.Role;
-import account.dto.User;
-import account.payload.request.dto.UserSingUpRequest;
+import account.entity.Role;
+import account.entity.User;
+import account.dto.request.info.UserSingUpRequest;
 import account.repository.RoleRepository;
 import account.repository.UserRepository;
 import account.service.role.RoleEnum;

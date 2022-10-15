@@ -2,7 +2,7 @@ package account.repository;
 
 import java.util.Optional;
 
-import account.dto.Role;
+import account.entity.Role;
 
 import account.service.role.RoleEnum;
 

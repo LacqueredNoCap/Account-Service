@@ -1,12 +1,11 @@
 package account.controller;
 
-import account.dto.User;
-import account.payload.request.UserRoleChangeRequest;
-import account.payload.response.UserDeletedResponse;
-import account.payload.response.dto.UserInfoResponse;
+import account.entity.User;
+import account.dto.request.UserRoleChangeRequest;
+import account.dto.response.UserDeletedResponse;
+import account.dto.response.info.UserInfoResponse;
 import account.service.UserRoleService;
 import account.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
