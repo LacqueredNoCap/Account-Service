@@ -1,4 +1,4 @@
-package account.service;
+package account.service.event;
 
 import account.entity.Event;
 import account.repository.EventRepository;

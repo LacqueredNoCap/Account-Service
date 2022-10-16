@@ -36,8 +36,11 @@ public class User {
     @Column
     private String password;
 
-    @Column
+    @Column(name = "not_locked")
     private boolean isNotLocked;
+
+    @Column(name = "failed_attempts")
+    private int failedAttempts;
 
     @ManyToMany(
             cascade = {CascadeType.PERSIST, CascadeType.MERGE},
@@ -48,9 +51,11 @@ public class User {
             joinColumns = @JoinColumn(name = "user_id"),
             inverseJoinColumns = @JoinColumn(name = "role_id")
     )
-    private Set<Role> roles = new HashSet<>();
+    private Set<Role> roles;
 
     public User() {
+        this.isNotLocked = true;
+        this.roles = new HashSet<>();
     }
 
     public User(String name, String lastname, String email, String password) {
@@ -58,6 +63,9 @@ public class User {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.isNotLocked = true;
+        this.failedAttempts = 0;
+        this.roles = new HashSet<>();
     }
 
     public void addRole(Role role) {

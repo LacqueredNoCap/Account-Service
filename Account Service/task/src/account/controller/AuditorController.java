@@ -1,7 +1,7 @@
 package account.controller;
 
 import account.dto.response.info.EventResponse;
-import account.service.EventService;
+import account.service.event.EventService;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
