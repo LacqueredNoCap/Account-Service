@@ -31,7 +31,7 @@ public class Event {
     @Enumerated(value = EnumType.STRING)
     private EventEnum event;
 
-    @Column(name = "user")
+    @Column(name = "user_name")
     private String user;
 
     @Column(name = "description")

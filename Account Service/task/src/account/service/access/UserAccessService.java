@@ -1,7 +1,6 @@
 package account.service.access;
 
 import account.repository.UserRepository;
-import account.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -11,20 +10,20 @@ import org.springframework.web.server.ResponseStatusException;
 @Service
 public class UserAccessService {
 
-    private final UserService userService;
     private final UserRepository userRepository;
 
-    public UserAccessService(UserService userService, UserRepository userRepository) {
-        this.userService = userService;
+    public UserAccessService(UserRepository userRepository) {
         this.userRepository = userRepository;
     }
 
     public User findUserByEmail(String email) {
-        return userService.findUserByEmail(email);
+        return userRepository.findUserByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "User doesn't exist!"));
     }
 
     public void provideAccessToUser(String email, String operation) {
-        User user = userService.findUserByEmail(email);
+        User user = this.findUserByEmail(email);
         AccessOperation accessOperation = getAccessOperation(operation);
 
         if (accessOperation.equals(AccessOperation.LOCK)) {
