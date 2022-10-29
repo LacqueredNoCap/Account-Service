@@ -42,7 +42,8 @@ public class AuthController {
 
         return ResponseEntity.ok().body(new PasswordResetResponse(
                 details.getUsername(),
-                "The password has been updated successfully"));
+                "The password has been updated successfully")
+        );
     }
     
 }

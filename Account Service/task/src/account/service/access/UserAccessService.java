@@ -1,14 +1,20 @@
 package account.service.access;
 
-import account.repository.UserRepository;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.server.ResponseStatusException;
 
 import account.entity.User;
-import org.springframework.web.server.ResponseStatusException;
+import account.repository.UserRepository;
+import account.service.role.RoleEnum;
 
 @Service
 public class UserAccessService {
+
+    @Value("${security.maxFailedAttempts}")
+    private int maxFailedAttempts;
 
     private final UserRepository userRepository;
 
@@ -16,15 +22,22 @@ public class UserAccessService {
         this.userRepository = userRepository;
     }
 
-    public User findUserByEmail(String email) {
-        return userRepository.findUserByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "User doesn't exist!"));
-    }
-
+    @Transactional
     public void provideAccessToUser(String email, String operation) {
-        User user = this.findUserByEmail(email);
+        User user = userRepository.findUserByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "User doesn't exist!")
+                );
         AccessOperation accessOperation = getAccessOperation(operation);
+
+        if (user.getRoles().stream().anyMatch(
+                role -> role.getName().equals(RoleEnum.ROLE_ADMINISTRATOR)) &&
+                accessOperation.equals(AccessOperation.LOCK)) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Can't lock the ADMINISTRATOR!"
+            );
+        }
 
         if (accessOperation.equals(AccessOperation.LOCK)) {
             lock(user);
@@ -34,23 +47,51 @@ public class UserAccessService {
         }
     }
 
-    public void increaseFailedAttempts(User user) {
-        int failedAttempts = user.getFailedAttempts();
-        userRepository.updateFailedAttempts(failedAttempts + 1, user.getEmail());
+    @Transactional
+    public void onFailLoginAttempt(String username) {
+        User user = this.findUserByEmail(username);
+
+        if (user.isLocked()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is blocked!");
+        }
+
+        int failedAttempts = user.getFailedAttempts() + 1;
+        if (failedAttempts >= maxFailedAttempts) {
+            lock(user);
+            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized!");
+        }
+
+        userRepository.updateFailedAttempts(failedAttempts, username);
+
+        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized!");
     }
 
-    public void resetFailedAttempts(User user) {
+    @Transactional
+    public void onSuccessLoginAttempt(String username) {
+        User user = this.findUserByEmail(username);
+
+        if (user.isLocked()) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is blocked!");
+        }
+
         userRepository.updateFailedAttempts(0, user.getEmail());
     }
 
-    public void lock(User user) {
-        user.setNotLocked(false);
+    private User findUserByEmail(String email) {
+        return userRepository.findUserByEmailIgnoreCase(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.UNAUTHORIZED, "Unauthorized!")
+                );
+    }
+
+    private void lock(User user) {
+        user.setLocked(true);
         user.setFailedAttempts(0);
         userRepository.save(user);
     }
 
-    public void unlock(User user) {
-        user.setNotLocked(true);
+    private void unlock(User user) {
+        user.setLocked(false);
         user.setFailedAttempts(0);
         userRepository.save(user);
     }
@@ -59,7 +100,10 @@ public class UserAccessService {
         try {
             return AccessOperation.valueOf(operation);
         } catch (IllegalArgumentException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Access operation not found");
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Access operation not found"
+            );
         }
     }
 }

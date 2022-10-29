@@ -9,8 +9,8 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 
-@Configuration
-@ComponentScan("account")
+//@Configuration
+//@ComponentScan("account")
 public class SpringConfig {
 
     @Value("${h2.driverClassName}")

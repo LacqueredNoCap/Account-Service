@@ -19,7 +19,7 @@ public class ApplicationUser implements UserDetails {
     public ApplicationUser(User user) {
         this.username = user.getName();
         this.password = user.getPassword();
-        this.isAccountNonLocked = user.isNotLocked();
+        this.isAccountNonLocked = !user.isLocked();
         this.grantedAuthorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toSet());

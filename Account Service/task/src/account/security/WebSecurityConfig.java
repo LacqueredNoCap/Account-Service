@@ -1,8 +1,5 @@
 package account.security;
 
-import account.handler.AccessDeniedHandlerImpl;
-import account.handler.RestAuthenticationEntryPoint;
-import account.service.role.RoleEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,29 +18,26 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import account.handler.AccessDeniedHandlerImpl;
+import account.handler.RestAuthenticationEntryPoint;
+import account.service.role.RoleEnum;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
-    private final LoginFailureHandler loginFailureHandler;
-    private final LoginSuccessHandler loginSuccessHandler;
-
     @Value("${passwordEncoder.strength}")
     private int passwordEncoderStrength;
 
+    private final UserDetailsService userDetailsService;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
+
     public WebSecurityConfig(
             UserDetailsService userDetailsService,
-            RestAuthenticationEntryPoint restAuthenticationEntryPoint,
-            LoginFailureHandler loginFailureHandler,
-            LoginSuccessHandler loginSuccessHandler) {
+            RestAuthenticationEntryPoint restAuthenticationEntryPoint) {
         this.userDetailsService = userDetailsService;
         this.restAuthenticationEntryPoint = restAuthenticationEntryPoint;
-        this.loginFailureHandler = loginFailureHandler;
-        this.loginSuccessHandler = loginSuccessHandler;
     }
 
     @Override
@@ -55,10 +49,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         http.httpBasic()
                 .authenticationEntryPoint(restAuthenticationEntryPoint) // Handle auth error
-                .and()
-                .formLogin()
-                .failureHandler(loginFailureHandler)
-                .successHandler(loginSuccessHandler)
                 .and()
                 .csrf().disable().headers().frameOptions().disable() // for Postman, the H2 console
                 .and()
