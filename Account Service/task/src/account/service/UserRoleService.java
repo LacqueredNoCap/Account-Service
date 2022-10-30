@@ -31,7 +31,7 @@ public class UserRoleService {
                         HttpStatus.NOT_FOUND, "User not found!"));
 
         RoleOperation roleOperation = getOperation(roleChange.getOperation());
-        Role role = this.getRoleByRoleEnum(getRole("ROLE_" + roleChange.getRoleOperation()));
+        Role role = this.getRoleByRoleEnum(getRole("ROLE_" + roleChange.getRole()));
 
         if (roleOperation.equals(RoleOperation.GRANT)) {
             this.grantRoleToUser(user, role);
@@ -70,7 +70,7 @@ public class UserRoleService {
         }
         if (!user.getRoles().contains(role)) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "The user does not have a role!");
+                    HttpStatus.BAD_REQUEST, "User doesn't have this role!");
         }
 
         user.removeRole(role);

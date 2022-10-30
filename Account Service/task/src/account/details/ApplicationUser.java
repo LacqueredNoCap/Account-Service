@@ -17,7 +17,7 @@ public class ApplicationUser implements UserDetails {
     private final Set<? extends GrantedAuthority> grantedAuthorities;
 
     public ApplicationUser(User user) {
-        this.username = user.getName();
+        this.username = user.getEmail();
         this.password = user.getPassword();
         this.isAccountNonLocked = !user.isLocked();
         this.grantedAuthorities = user.getRoles().stream()

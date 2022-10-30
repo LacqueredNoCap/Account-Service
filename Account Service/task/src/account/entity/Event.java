@@ -21,23 +21,23 @@ public class Event {
             strategy = GenerationType.SEQUENCE,
             generator = "events_sequence"
     )
-    @Column(name = "id")
+    @Column
     private Long id;
 
-    @Column(name = "timestamp", columnDefinition = "TIMESTAMP WITH TIME ZONE")
+    @Column(columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime timestamp;
 
-    @Column(name = "event")
+    @Column
     @Enumerated(value = EnumType.STRING)
     private EventEnum event;
 
-    @Column(name = "user_name")
-    private String user;
+    @Column
+    private String subject;
 
-    @Column(name = "description")
-    private String description;
+    @Column
+    private String object;
 
-    @Column(name = "path")
+    @Column
     private String path;
 
     public Event() {
@@ -46,13 +46,13 @@ public class Event {
     public Event(
             OffsetDateTime timestamp,
             EventEnum event,
-            String user,
-            String description,
+            String subject,
+            String object,
             String path) {
         this.timestamp = timestamp;
         this.event = event;
-        this.user = user;
-        this.description = description;
+        this.subject = subject;
+        this.object = object;
         this.path = path;
     }
 }

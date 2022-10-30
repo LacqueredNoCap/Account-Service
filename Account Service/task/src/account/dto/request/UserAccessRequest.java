@@ -4,8 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 @Getter @Setter
-public class UserLockRequest {
+public class UserAccessRequest {
 
     private String user;
-    private String roleOperation;
+    private String operation;
 }

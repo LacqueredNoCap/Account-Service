@@ -40,8 +40,8 @@ public class EventResponse {
                 event.getId(),
                 event.getTimestamp().toLocalDate(),
                 event.getEvent().name(),
-                event.getUser(),
-                event.getDescription(),
+                event.getSubject(),
+                event.getObject(),
                 event.getPath()
         );
     }

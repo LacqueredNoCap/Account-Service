@@ -1,5 +1,7 @@
 package account.service.access;
 
+import account.service.event.EventEnum;
+import account.service.event.EventService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,24 +12,25 @@ import account.entity.User;
 import account.repository.UserRepository;
 import account.service.role.RoleEnum;
 
+import java.util.Locale;
+
 @Service
 public class UserAccessService {
 
     @Value("${security.maxFailedAttempts}")
     private int maxFailedAttempts;
 
+    private final EventService eventService;
     private final UserRepository userRepository;
 
-    public UserAccessService(UserRepository userRepository) {
+    public UserAccessService(EventService eventService, UserRepository userRepository) {
+        this.eventService = eventService;
         this.userRepository = userRepository;
     }
 
     @Transactional
     public void provideAccessToUser(String email, String operation) {
-        User user = userRepository.findUserByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "User doesn't exist!")
-                );
+        User user = this.findUserByEmail(email);
         AccessOperation accessOperation = getAccessOperation(operation);
 
         if (user.getRoles().stream().anyMatch(
@@ -48,22 +51,50 @@ public class UserAccessService {
     }
 
     @Transactional
-    public void onFailLoginAttempt(String username) {
+    public void onFailLoginAttempt(String username, String requestURI) {
         User user = this.findUserByEmail(username);
 
+        eventService.makeEvent(
+                EventEnum.LOGIN_FAILED,
+                username.toLowerCase(Locale.ENGLISH),
+                requestURI,
+                requestURI
+        );
+
         if (user.isLocked()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is blocked!");
+            return;
         }
 
         int failedAttempts = user.getFailedAttempts() + 1;
         if (failedAttempts >= maxFailedAttempts) {
+            eventService.makeEvent(
+                    EventEnum.BRUTE_FORCE,
+                    username.toLowerCase(Locale.ENGLISH),
+                    requestURI,
+                    requestURI
+            );
+
+            if (user.getRoles().stream().anyMatch(
+                    role -> role.getName().equals(RoleEnum.ROLE_ADMINISTRATOR))) {
+                return;
+            }
+
             lock(user);
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized!");
+
+            eventService.makeEvent(
+                    EventEnum.LOCK_USER,
+                    username.toLowerCase(Locale.ENGLISH),
+                    "Lock user " + username.toLowerCase(Locale.ENGLISH),
+                    requestURI
+            );
+
+            return;
         }
 
         userRepository.updateFailedAttempts(failedAttempts, username);
-
-        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Unauthorized!");
+        System.out.println("FAIL LOGIN: " + username +
+                ", attempts remaining: " + (maxFailedAttempts - failedAttempts)
+        );
     }
 
     @Transactional
@@ -71,16 +102,17 @@ public class UserAccessService {
         User user = this.findUserByEmail(username);
 
         if (user.isLocked()) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User is blocked!");
+            return;
         }
 
         userRepository.updateFailedAttempts(0, user.getEmail());
+        System.out.println("SUCCESS LOGIN: " + username);
     }
 
     private User findUserByEmail(String email) {
         return userRepository.findUserByEmailIgnoreCase(email)
                 .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.UNAUTHORIZED, "Unauthorized!")
+                        HttpStatus.BAD_REQUEST, "User doesn't exist!")
                 );
     }
 
