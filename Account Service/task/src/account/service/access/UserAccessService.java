@@ -13,6 +13,7 @@ import account.repository.UserRepository;
 import account.service.role.RoleEnum;
 
 import java.util.Locale;
+import java.util.Optional;
 
 @Service
 public class UserAccessService {
@@ -30,7 +31,10 @@ public class UserAccessService {
 
     @Transactional
     public void provideAccessToUser(String email, String operation) {
-        User user = this.findUserByEmail(email);
+        User user = this.findUserByEmail(email)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "User doesn't exist!")
+        );
         AccessOperation accessOperation = getAccessOperation(operation);
 
         if (user.getRoles().stream().anyMatch(
@@ -52,14 +56,19 @@ public class UserAccessService {
 
     @Transactional
     public void onFailLoginAttempt(String username, String requestURI) {
-        User user = this.findUserByEmail(username);
-
+        System.out.println("FAILED LOGIN: " + username);
         eventService.makeEvent(
                 EventEnum.LOGIN_FAILED,
                 username.toLowerCase(Locale.ENGLISH),
                 requestURI,
                 requestURI
         );
+
+        Optional<User> optionalUser = this.findUserByEmail(username);
+        if (optionalUser.isEmpty()) {
+            return;
+        }
+        User user = optionalUser.get();
 
         if (user.isLocked()) {
             return;
@@ -99,7 +108,10 @@ public class UserAccessService {
 
     @Transactional
     public void onSuccessLoginAttempt(String username) {
-        User user = this.findUserByEmail(username);
+        User user = this.findUserByEmail(username)
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST, "User doesn't exist!")
+        );
 
         if (user.isLocked()) {
             return;
@@ -109,11 +121,8 @@ public class UserAccessService {
         System.out.println("SUCCESS LOGIN: " + username);
     }
 
-    private User findUserByEmail(String email) {
-        return userRepository.findUserByEmailIgnoreCase(email)
-                .orElseThrow(() -> new ResponseStatusException(
-                        HttpStatus.BAD_REQUEST, "User doesn't exist!")
-                );
+    private Optional<User> findUserByEmail(String email) {
+        return userRepository.findUserByEmailIgnoreCase(email);
     }
 
     private void lock(User user) {
