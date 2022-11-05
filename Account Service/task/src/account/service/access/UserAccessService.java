@@ -1,7 +1,8 @@
 package account.service.access;
 
-import account.service.event.EventEnum;
-import account.service.event.EventService;
+import java.util.Locale;
+import java.util.Optional;
+
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -10,10 +11,9 @@ import org.springframework.web.server.ResponseStatusException;
 
 import account.entity.User;
 import account.repository.UserRepository;
+import account.service.event.EventEnum;
+import account.service.event.EventService;
 import account.service.role.RoleEnum;
-
-import java.util.Locale;
-import java.util.Optional;
 
 @Service
 public class UserAccessService {
@@ -56,7 +56,6 @@ public class UserAccessService {
 
     @Transactional
     public void onFailLoginAttempt(String username, String requestURI) {
-        System.out.println("FAILED LOGIN: " + username);
         eventService.makeEvent(
                 EventEnum.LOGIN_FAILED,
                 username.toLowerCase(Locale.ENGLISH),
@@ -101,9 +100,6 @@ public class UserAccessService {
         }
 
         userRepository.updateFailedAttempts(failedAttempts, username);
-        System.out.println("FAIL LOGIN: " + username +
-                ", attempts remaining: " + (maxFailedAttempts - failedAttempts)
-        );
     }
 
     @Transactional
@@ -118,7 +114,6 @@ public class UserAccessService {
         }
 
         userRepository.updateFailedAttempts(0, user.getEmail());
-        System.out.println("SUCCESS LOGIN: " + username);
     }
 
     private Optional<User> findUserByEmail(String email) {

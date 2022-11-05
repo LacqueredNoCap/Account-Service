@@ -29,7 +29,7 @@ public class AuthenticationFailureListener implements
 
     @Override
     public void onApplicationEvent(AuthenticationFailureBadCredentialsEvent event) {
-        System.out.println("FAILED AUTHENTICATION");
+        // String username = ((Principal) event.getAuthentication().getPrincipal()).getName();
 
         String authorization = request.getHeader("Authorization");
         validateAuthorizationHeader(authorization);

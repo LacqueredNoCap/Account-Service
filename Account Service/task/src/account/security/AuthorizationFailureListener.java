@@ -4,13 +4,16 @@ import javax.servlet.http.HttpServletRequest;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
+import java.util.Locale;
 
-import account.service.event.EventService;
 import org.springframework.context.ApplicationListener;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.event.AuthorizationFailureEvent;
 import org.springframework.stereotype.Component;
+
 import org.springframework.web.server.ResponseStatusException;
+import account.service.event.EventEnum;
+import account.service.event.EventService;
 
 @Component
 public class AuthorizationFailureListener implements
@@ -26,16 +29,18 @@ public class AuthorizationFailureListener implements
 
     @Override
     public void onApplicationEvent(AuthorizationFailureEvent event) {
-//        String authorization = request.getHeader("Authorization");
-//        validateAuthorizationHeader(authorization);
-//        String username = decodePrincipal(authorization);
-//
-//        eventService.makeEvent(
-//                EventEnum.ACCESS_DENIED,
-//                username.toLowerCase(Locale.ENGLISH),
-//                request.getRequestURI(),
-//                request.getRequestURI()
-//        );
+        //String username = ((Principal) event.getAuthentication().getPrincipal()).getName();
+
+        String authorization = request.getHeader("Authorization");
+        validateAuthorizationHeader(authorization);
+        String username = decodePrincipal(authorization);
+
+        eventService.makeEvent(
+                EventEnum.ACCESS_DENIED,
+                username.toLowerCase(Locale.ENGLISH),
+                request.getRequestURI(),
+                request.getRequestURI()
+        );
     }
 
     private void validateAuthorizationHeader(String authorizationHeader) {

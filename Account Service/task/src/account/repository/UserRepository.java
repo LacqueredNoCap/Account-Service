@@ -15,7 +15,7 @@ public interface UserRepository extends JpaRepository<User, Long> {
     boolean existsUserByEmailIgnoreCase(String email);
 
     //@Query("UPDATE User u SET u.failedAttempts = ?1 WHERE u.email = LOWER(?2) ")
-    @Query(value = "UPDATE users u SET u.failed_attempts = ?1 WHERE u.email = LOWER(?2) ", nativeQuery = true)
+    @Query(value = "UPDATE users SET failed_attempts = ?1 WHERE email = LOWER(?2) ", nativeQuery = true)
     @Modifying
     void updateFailedAttempts(int attempts, String email);
 

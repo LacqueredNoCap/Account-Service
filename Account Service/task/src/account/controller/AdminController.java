@@ -11,6 +11,7 @@ import account.service.UserService;
 import account.service.access.UserAccessService;
 import account.service.event.EventEnum;
 import account.service.event.EventService;
+import account.service.role.RoleOperation;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -59,8 +60,8 @@ public class AdminController {
 
         eventService.makeEvent(
                 EventEnum.DELETE_USER,
-                email.toLowerCase(Locale.ENGLISH),
                 userDetails.getUsername(),
+                email.toLowerCase(Locale.ENGLISH),
                 "/api/admin/user/role"
         );
 
@@ -82,9 +83,14 @@ public class AdminController {
                 EventEnum.valueOf(request.getOperation() + "_ROLE"),
                 userDetails.getUsername(),
                 String.format(
-                        "%s role %s to %s",
-                        request.getOperation().charAt(0) + request.getOperation().substring(1).toLowerCase(Locale.ENGLISH),
+                        "%s role %s %s %s",
+                        request.getOperation().charAt(0) +
+                                request.getOperation()
+                                        .substring(1)
+                                        .toLowerCase(Locale.ENGLISH),
                         request.getRole(),
+                        RoleOperation.valueOf(request.getOperation()).equals(RoleOperation.GRANT) ?
+                                "to" : "from",
                         request.getUser().toLowerCase(Locale.ENGLISH)
                 ),
                 "/api/admin/user/role"

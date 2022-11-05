@@ -30,7 +30,7 @@ public class AuthenticationSuccessEventListener implements
 
     @Override
     public void onApplicationEvent(AuthenticationSuccessEvent event) {
-        System.out.println("SUCCESS AUTHENTICATION");
+        // String username = ((Principal) event.getAuthentication().getPrincipal()).getName();
 
         String authorization = request.getHeader("Authorization");
         validateAuthorizationHeader(authorization);

@@ -57,7 +57,7 @@ public class AuthController {
         eventService.makeEvent(
                 EventEnum.CHANGE_PASSWORD,
                 userDetails.getUsername(),
-                "/api/auth/changepass",
+                userDetails.getUsername(),
                 "/api/auth/changepass"
         );
 
