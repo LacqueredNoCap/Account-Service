@@ -24,8 +24,8 @@ public class EventService {
                           String subject,
                           String object,
                           String path) {
-        Event event = new Event
-                (OffsetDateTime.now(),
+        Event event = new Event(
+                OffsetDateTime.now(),
                 action,
                 subject,
                 object,
