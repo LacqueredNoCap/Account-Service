@@ -6,7 +6,6 @@ import account.payload.response.UserDeletedResponse;
 import account.payload.response.dto.UserInfoResponse;
 import account.service.UserRoleService;
 import account.service.UserService;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
@@ -39,8 +38,7 @@ public class AdminController {
     }
 
     @DeleteMapping("/{email}")
-    public UserDeletedResponse deleteUser(
-            @PathVariable(value = "email", required = false) String email) {
+    public UserDeletedResponse deleteUser(@PathVariable(value = "email", required = false) String email) {
         userService.deleteUserByEmail(email);
         return new UserDeletedResponse(email, "Deleted successfully!");
     }
