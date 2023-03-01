@@ -40,9 +40,11 @@ public class AuthController {
                                          @AuthenticationPrincipal UserDetails details) {
         userService.changeUserPassword(details.getUsername(), request.getNewPassword());
 
-        return ResponseEntity.ok().body(new PasswordResetResponse(
-                details.getUsername(),
-                "The password has been updated successfully"));
+        return ResponseEntity.ok().body(
+                new PasswordResetResponse(
+                        details.getUsername(),
+                        "The password has been updated successfully")
+        );
     }
     
 }

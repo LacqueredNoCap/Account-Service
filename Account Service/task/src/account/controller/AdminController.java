@@ -19,7 +19,7 @@ import java.util.stream.Collectors;
 //    hasAnyAuthority('permission1', 'permission2', ...)
 
 @RestController
-@RequestMapping("/api/admin/user")
+@RequestMapping("/api/admin/users")
 public class AdminController {
 
     private final UserService userService;
