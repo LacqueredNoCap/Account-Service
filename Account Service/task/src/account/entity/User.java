@@ -1,4 +1,4 @@
-package account.dto;
+package account.entity;
 
 import lombok.Getter;
 import lombok.Setter;
@@ -22,7 +22,7 @@ public class User {
             generator = "user_sequence"
     )
     @Column
-    private long id;
+    private Long id;
 
     @Column
     private String name;
@@ -36,10 +36,13 @@ public class User {
     @Column
     private String password;
 
-    @ManyToMany(
-            cascade = {CascadeType.PERSIST, CascadeType.MERGE},
-            fetch = FetchType.EAGER
-    )
+    @Column(name = "is_locked")
+    private boolean isLocked;
+
+    @Column(name = "failed_attempts")
+    private int failedAttempts;
+
+    @ManyToMany
     @JoinTable(
             name = "user_role",
             joinColumns = @JoinColumn(name = "user_id"),
@@ -48,6 +51,7 @@ public class User {
     private Set<Role> roles = new HashSet<>();
 
     public User() {
+
     }
 
     public User(String name, String lastname, String email, String password) {
@@ -55,6 +59,8 @@ public class User {
         this.lastname = lastname;
         this.email = email;
         this.password = password;
+        this.failedAttempts = 0;
+        this.roles = new HashSet<>();
     }
 
     public void addRole(Role role) {

@@ -12,9 +12,9 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import account.dto.Payment;
-import account.dto.User;
-import account.payload.response.dto.PaymentResponse;
+import account.entity.Payment;
+import account.entity.User;
+import account.dto.response.info.PaymentResponse;
 import account.repository.PaymentRepository;
 import account.repository.UserRepository;
 

@@ -1,8 +1,5 @@
 package account.security;
 
-import account.handler.AccessDeniedHandlerImpl;
-import account.handler.RestAuthenticationEntryPoint;
-import account.service.role.RoleEnum;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -21,16 +18,20 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.access.AccessDeniedHandler;
 
+import account.handler.AccessDeniedHandlerImpl;
+import account.handler.RestAuthenticationEntryPoint;
+import account.service.role.RoleEnum;
+
 @Configuration
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(prePostEnabled = true)
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
-    private final UserDetailsService userDetailsService;
-    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
-
     @Value("${passwordEncoder.strength}")
     private int passwordEncoderStrength;
+
+    private final UserDetailsService userDetailsService;
+    private final RestAuthenticationEntryPoint restAuthenticationEntryPoint;
 
     public WebSecurityConfig(
             UserDetailsService userDetailsService,
@@ -56,6 +57,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .mvcMatchers("/api/admin/**").hasAuthority(RoleEnum.ROLE_ADMINISTRATOR.name())
                 .mvcMatchers("/api/acct/**").hasAuthority(RoleEnum.ROLE_ACCOUNTANT.name())
                 .mvcMatchers(HttpMethod.GET, "/api/empl/payment").hasAnyAuthority(RoleEnum.ROLE_USER.name(), RoleEnum.ROLE_ACCOUNTANT.name())
+                .mvcMatchers("api/security/**").hasAuthority(RoleEnum.ROLE_AUDITOR.name())
                 .anyRequest().authenticated()
                 .and()
                 .sessionManagement()
@@ -87,4 +89,5 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     public AccessDeniedHandler accessDeniedHandler() {
         return new AccessDeniedHandlerImpl();
     }
+
 }

@@ -1,6 +1,6 @@
 package account.details;
 
-import account.dto.User;
+import account.entity.User;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -13,22 +13,16 @@ public class ApplicationUser implements UserDetails {
 
     private final String username;
     private final String password;
+    private final boolean isAccountNonLocked;
     private final Set<? extends GrantedAuthority> grantedAuthorities;
 
-    public ApplicationUser(String username,
-                           String password,
-                           Set<? extends GrantedAuthority> grantedAuthorities) {
-        this.username = username;
-        this.password = password;
-        this.grantedAuthorities = grantedAuthorities;
-    }
-
-    public static UserDetails fromUser(User user) {
-        Set<SimpleGrantedAuthority> authorities = user.getRoles().stream()
+    public ApplicationUser(User user) {
+        this.username = user.getEmail();
+        this.password = user.getPassword();
+        this.isAccountNonLocked = !user.isLocked();
+        this.grantedAuthorities = user.getRoles().stream()
                 .map(role -> new SimpleGrantedAuthority(role.getName().name()))
                 .collect(Collectors.toSet());
-
-        return new ApplicationUser(user.getEmail(), user.getPassword(), authorities);
     }
 
     @Override
@@ -53,7 +47,7 @@ public class ApplicationUser implements UserDetails {
 
     @Override
     public boolean isAccountNonLocked() {
-        return true;
+        return isAccountNonLocked;
     }
 
     @Override

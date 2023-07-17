@@ -3,7 +3,7 @@ package account.repository;
 import java.util.List;
 import java.util.Optional;
 
-import account.dto.Payment;
+import account.entity.Payment;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,4 +1,4 @@
-package account.payload.response;
+package account.dto.response;
 
 import lombok.Getter;
 

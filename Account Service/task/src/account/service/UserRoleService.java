@@ -1,15 +1,16 @@
 package account.service;
 
-import account.dto.Role;
-import account.dto.User;
-import account.payload.request.UserRoleChangeRequest;
+import account.entity.Role;
+import account.entity.User;
+import account.dto.request.UserRoleChangeRequest;
 import account.repository.RoleRepository;
 import account.repository.UserRepository;
-import account.service.role.Operation;
+import account.service.role.RoleOperation;
 import account.service.role.RoleEnum;
 import account.service.role.RoleType;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 @Service
@@ -23,18 +24,19 @@ public class UserRoleService {
         this.roleRepository = roleRepository;
     }
 
+    @Transactional
     public void changeUserRole(UserRoleChangeRequest roleChange) {
         User user = userRepository.findUserByEmailIgnoreCase(roleChange.getUser())
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "User not found!"));
 
-        Operation operation = getOperation(roleChange.getOperation());
+        RoleOperation roleOperation = getOperation(roleChange.getOperation());
         Role role = this.getRoleByRoleEnum(getRole("ROLE_" + roleChange.getRole()));
 
-        if (operation.equals(Operation.GRANT)) {
+        if (roleOperation.equals(RoleOperation.GRANT)) {
             this.grantRoleToUser(user, role);
         }
-        if (operation.equals(Operation.REMOVE)) {
+        if (roleOperation.equals(RoleOperation.REMOVE)) {
             this.removeRoleFromUser(user, role);
         }
 
@@ -68,18 +70,18 @@ public class UserRoleService {
         }
         if (!user.getRoles().contains(role)) {
             throw new ResponseStatusException(
-                    HttpStatus.BAD_REQUEST, "The user does not have a role!");
+                    HttpStatus.BAD_REQUEST, "User doesn't have this role!");
         }
 
         user.removeRole(role);
     }
 
-    private static Operation getOperation(String operation) {
+    private static RoleOperation getOperation(String operation) {
         try {
-            return Operation.valueOf(operation);
+            return RoleOperation.valueOf(operation);
         } catch (IllegalArgumentException e) {
             throw new ResponseStatusException(
-                    HttpStatus.NOT_FOUND, "Operation not found!");
+                    HttpStatus.NOT_FOUND, "RoleOperation not found!");
         }
     }
 

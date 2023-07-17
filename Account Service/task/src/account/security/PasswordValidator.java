@@ -29,17 +29,20 @@ public class PasswordValidator {
         if (newPassword.length() < MIN_PASSWORD_LENGTH) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "Password length must be 12 chars minimum!");
+                    "Password length must be 12 chars minimum!"
+            );
         }
         if (BREACHED_PASSWORDS.contains(newPassword)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "The password is in the hacker's database!");
+                    "The password is in the hacker's database!"
+            );
         }
         if (encoder.matches(newPassword, oldPassword)) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST,
-                    "The passwords must be different!");
+                    "The passwords must be different!"
+            );
         }
     }
 }

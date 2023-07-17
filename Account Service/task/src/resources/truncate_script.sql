@@ -1,0 +1,1 @@
+TRUNCATE users, payments, roles, user_role, events RESTART IDENTITY;

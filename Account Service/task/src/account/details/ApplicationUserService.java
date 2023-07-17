@@ -1,6 +1,6 @@
 package account.details;
 
-import account.dto.User;
+import account.entity.User;
 import account.repository.UserRepository;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -17,10 +17,10 @@ public class ApplicationUserService implements UserDetailsService {
     }
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User user = userRepository.findUserByEmailIgnoreCase(username)
                 .orElseThrow(() -> new UsernameNotFoundException(
-                        String.format("User with email \"%s\" not found", username)));
-        return ApplicationUser.fromUser(user);
+                        String.format("User \"%s\" not found", username)));
+        return new ApplicationUser(user);
     }
 }

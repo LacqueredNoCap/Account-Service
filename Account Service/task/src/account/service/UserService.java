@@ -1,21 +1,22 @@
 package account.service;
 
-import account.dto.Role;
-import account.dto.User;
-import account.payload.request.dto.UserSingUpRequest;
-import account.repository.RoleRepository;
-import account.repository.UserRepository;
-import account.service.role.RoleEnum;
-import account.security.PasswordValidator;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Locale;
+import account.entity.Role;
+import account.entity.User;
+import account.dto.request.info.UserSingUpRequest;
+import account.repository.RoleRepository;
+import account.repository.UserRepository;
+import account.service.role.RoleEnum;
+import account.security.PasswordValidator;
 
 @Service
 public class UserService {
@@ -45,7 +46,7 @@ public class UserService {
         return userRepository.findAll();
     }
 
-    @Transactional(rollbackFor = ResponseStatusException.class)
+    @Transactional
     public void signup(UserSingUpRequest newUser) {
         if (userRepository.existsUserByEmailIgnoreCase(newUser.getEmail())) {
             throw new ResponseStatusException(
@@ -63,16 +64,14 @@ public class UserService {
             user.addRole(roleRepository.findRoleByName(RoleEnum.ROLE_ADMINISTRATOR)
                     .orElseThrow(() -> new ResponseStatusException(
                                     HttpStatus.NOT_FOUND,
-                                    "Role not found!"
-                            )
-                    ));
+                                    "Role not found!"))
+            );
         } else {
             user.addRole(roleRepository.findRoleByName(RoleEnum.ROLE_USER)
                     .orElseThrow(() -> new ResponseStatusException(
                                     HttpStatus.NOT_FOUND,
-                                    "Role not found!"
-                            )
-                    ));
+                                    "Role not found!"))
+            );
         }
 
         this.save(user);
@@ -86,7 +85,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional(rollbackFor = ResponseStatusException.class)
+    @Transactional
     public void changeUserPassword(String email, String newPassword) {
         User user = this.findUserByEmail(email);
         passwordValidator.validatePassword(user.getPassword(), newPassword);
@@ -94,7 +93,7 @@ public class UserService {
         userRepository.save(user);
     }
 
-    @Transactional(rollbackFor = ResponseStatusException.class)
+    @Transactional
     public void deleteUserByEmail(String email) {
         if (!userRepository.existsUserByEmailIgnoreCase(email)) {
             throw new ResponseStatusException(
