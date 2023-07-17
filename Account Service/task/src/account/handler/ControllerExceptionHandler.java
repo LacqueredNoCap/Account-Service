@@ -22,7 +22,11 @@ import java.util.Date;
 public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
 
     @Override
-    protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleMethodArgumentNotValid(
+            MethodArgumentNotValidException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         String defaultMessage = ex
                 .getBindingResult()
                 .getAllErrors()
@@ -48,7 +52,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleTypeMismatch(TypeMismatchException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleTypeMismatch(
+            TypeMismatchException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         ErrorMessage responseEntity = ErrorMessage
                 .builder()
                 .timestamp(new Date())
@@ -67,7 +75,11 @@ public class ControllerExceptionHandler extends ResponseEntityExceptionHandler {
     }
 
     @Override
-    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(
+            HttpMessageNotReadableException ex,
+            HttpHeaders headers,
+            HttpStatus status,
+            WebRequest request) {
         ErrorMessage responseEntity = ErrorMessage
                 .builder()
                 .timestamp(new Date())
